@@ -1,10 +1,10 @@
 '''--------------------------- Core Script ---------------------------------'''
 '''
-    Description: This library is based on the algorithms described in 
-    [1] Chin-Chia Michael Yeh, Yan Zhu, Liudmila Ulanova, Nurjahan Begum, 
-        Yifei Ding, Hoang Anh Dau, Diego Furtado Silva, Abdullah Mueen, 
-        Eamonn Keogh (2016). Matrix Profile I: All Pairs Similarity Joins 
-        for Time Series: A Unifying View that Includes Motifs, Discords and 
+    Description: This library is based on the algorithms described in
+    [1] Chin-Chia Michael Yeh, Yan Zhu, Liudmila Ulanova, Nurjahan Begum,
+        Yifei Ding, Hoang Anh Dau, Diego Furtado Silva, Abdullah Mueen,
+        Eamonn Keogh (2016). Matrix Profile I: All Pairs Similarity Joins
+        for Time Series: A Unifying View that Includes Motifs, Discords and
         Shapelets. IEEE ICDM 2016.
 '''
 import numpy as np
@@ -130,7 +130,7 @@ def stamp(Ta, Tb, m):
     """
     Compute the Matrix Profile between time-series Ta and Tb.
     If Ta==Tb, the operation is a self-join and trivial matches are ignored.
-    
+
     :param Ta: time-series, np.array
     :param Tb: time-series, np.array
     :param m: subsequence length
@@ -157,7 +157,7 @@ def stamp(Ta, Tb, m):
             maxIdx = int(np.minimum(idx+m/2.0,len(D)))
             D[minIdx:maxIdx:1] = np.inf
 
-        Iab[Pab>D] = i
+        Iab[Pab > D] = idx
         Pab = np.minimum(Pab,D)
     return Pab, Iab
 
@@ -202,7 +202,7 @@ def stomp(T, m):
 
         Iab[Pab > D] = idx
         np.minimum(Pab, D,Pab)
-        
+
     np.sqrt(Pab,Pab)
     return Pab, Iab
 
@@ -257,12 +257,12 @@ def plot_motif(Ta, values, indexes, m):
 def plot_discord(Ta, Tb, values, indexes, m):
     from matplotlib import gridspec
     plt.figure(figsize=(8,4))
-    gs = gridspec.GridSpec(1, 2, width_ratios=[int(len(Ta)/len(Tb)), 1]) 
+    gs = gridspec.GridSpec(1, 2, width_ratios=[int(len(Ta)/len(Tb)), 1])
 
     plt.subplot(gs[0])
     plt.plot(Ta, linestyle='--')
     plt.xlim((0, len(Ta)))
-        
+
     plt.plot(range(np.argmin(values), np.argmin(values) + m), Ta[np.argmin(values):np.argmin(values) + m], c='g', label='Best Match')
     plt.legend(loc='best')
     plt.title('Time-Series')
@@ -270,7 +270,7 @@ def plot_discord(Ta, Tb, values, indexes, m):
 
     plt.subplot(gs[1])
     plt.plot(Tb)
-    
+
 
     plt.title('Query')
     plt.xlim((0, len(Tb)))
