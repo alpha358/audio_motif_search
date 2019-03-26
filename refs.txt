@@ -1,0 +1,3 @@
+pip install matrixprofile-ts
+https://tech.target.com/2018/12/11/matrix-profile.html <--- same package
+https://github.com/target/matrixprofile-ts
