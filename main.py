@@ -86,6 +86,7 @@ def seconds_to_steps(t):
     '''
     return int(218/5 * t)
 
+
 def norm(x): return (x - np.mean(x))/np.std(x)
 
 # ============================================================================ #
@@ -97,6 +98,8 @@ def get_m_profile(A, B, m):
     A --- time series 1
     B --- time series 2
     m --- motif length
+
+    Return: matrix_profile, mpIndex
     '''
     matrix_profile, mpIndex = stamp(A, B, m)
 #     matrix_profile, mpIndex = stomp(A, m, tsB=B)
@@ -109,6 +112,18 @@ def get_m_profile(A, B, m):
 # ============================================================================ #
 #                               FILTER TOP MOTIFS                              #
 # ============================================================================ #
+def not_too_close_to_previous_motifs(idx_1, idx_1_, min_distance):
+    '''
+    Purpose: check for previous motifs at the same place
+    idx_1 --- array of motif start indices
+    idx_1_ --- candidate motif index
+    '''
+    if len(idx_1)>0: # there are prevous motifs
+        # check if there is no other close motif
+        return not np.any(np.abs(np.array(idx_1) - idx_1_) < min_distance)
+
+    else:
+        return True
 
 def top_motifs(matrix_profile, mpIndex, N, min_distance=0):
     '''
@@ -129,10 +144,13 @@ def top_motifs(matrix_profile, mpIndex, N, min_distance=0):
     # select the motifs
     for n in range(N):
         if np.abs(idx_1_[n] - idx_2_[n]) > min_distance:
-            # Select only motifs that are enough far away
-            idx_1.append( int(idx_1_[n]) )
-            idx_2.append( int(idx_2_[n]) )
-            distanceL2.append( matrix_profile[idx_1_[n]])
+            # Select only motifs that are far away enough
+            if not_too_close_to_previous_motifs(idx_1, idx_1_[n], min_distance) and \
+            not_too_close_to_previous_motifs(idx_2, idx_2_[n], min_distance):
+
+                idx_1.append( int(idx_1_[n]) )
+                idx_2.append( int(idx_2_[n]) )
+                distanceL2.append( matrix_profile[idx_1_[n]])
 
 
     return idx_1, idx_2, distanceL2
@@ -142,6 +160,28 @@ def top_motifs(matrix_profile, mpIndex, N, min_distance=0):
 # ============================================================================ #
 #                                  PLAY MOTIFS                                 #
 # ============================================================================ #
+def plot_two_motifs(A, B, idx_1, idx_2, motif_len):
+    '''
+    Purpose: Plot A and B similar subsequences
+        normalized and raw
+
+    A, B --- series
+    idx_1 --- start index for series A
+    idx_2 --- start index for series B
+    motif_len --- length of the motif
+    '''
+
+    plt.figure(figsize=(10, 5))
+
+    plt.subplot(1, 2, 1)
+    plt.plot(A[idx_1: idx_1 + motif_len])
+    plt.plot(B[idx_2: idx_2 + motif_len])
+    plt.title('Normalized, distance: '+str(abs(idx_1 - idx_2))
+
+    plt.subplot(1, 2, 2)
+    plt.plot(norm(A[idx_1: idx_1 + motif_len]))
+    plt.plot(norm(B[idx_2: idx_2 + motif_len]))
+    plt.title('Raw, distance: '+str(abs(idx_1 - idx_2))
 
 
 def display_motif(idx, motif_len, samples):
