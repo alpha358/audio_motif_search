@@ -7,7 +7,9 @@ import librosa.display
 import matplotlib.pyplot as plt  # grafikams
 import numpy as np
 import time
-
+from collections import defaultdict
+import pickle
+from tqdm import tqdm
 
 from core import * # Matrix profile
 
@@ -108,6 +110,34 @@ def get_m_profile(A, B, m):
     return matrix_profile, mpIndex
 
 
+def compute_m_profiles(A, B,
+                       motif_lengths=[30, 100],
+                       channels=[2, 10],
+                       name='profiles1'
+                       ):
+    '''
+    Purpose: Compute many matrix profiles.
+
+    A[chnnl, time], B[chnnl, time] --- time series
+    motif_lengths ---
+    channels  ---- channels for computation
+    '''
+
+    profiles = defaultdict(dict)
+
+    for motif_len in tqdm(motif_lengths):
+        for channel in channels:
+
+            # compute matrix profile
+            m_profile, m_idx = get_m_profile(
+                A[channel, :], B[channel, :], motif_len)
+            profiles[channel][motif_len] = (m_profile, m_idx)
+
+            # save the matrix profile
+            with open(name + '.pickle', 'wb') as hdl:  # overwriting (erasing) older file
+                pickle.dump(profiles, hdl, protocol=pickle.HIGHEST_PROTOCOL)
+
+    return profiles
 
 # ============================================================================ #
 #                               FILTER TOP MOTIFS                              #
