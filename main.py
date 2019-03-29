@@ -173,15 +173,19 @@ def plot_two_motifs(A, B, idx_1, idx_2, motif_len):
 
     plt.figure(figsize=(10, 5))
 
+    dt = abs(idx_1 - idx_2)
+
     plt.subplot(1, 2, 1)
     plt.plot(A[idx_1: idx_1 + motif_len])
     plt.plot(B[idx_2: idx_2 + motif_len])
-    plt.title('Normalized, distance: '+str(abs(idx_1 - idx_2))
+    plt.title('Normalized, distance: ' + str(dt) )
 
     plt.subplot(1, 2, 2)
     plt.plot(norm(A[idx_1: idx_1 + motif_len]))
     plt.plot(norm(B[idx_2: idx_2 + motif_len]))
-    plt.title('Raw, distance: '+str(abs(idx_1 - idx_2))
+    plt.title('Raw, distance: '+str(dt) )
+
+    plt.show()
 
 
 def display_motif(idx, motif_len, samples):
